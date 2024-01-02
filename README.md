@@ -5,25 +5,25 @@
 A browser extension builder with Astro and Bun  
 [Node.js + npm Version here](https://github.com/AminoffZ/catonaut-node) 💚
 
-For those who prefer 
+For those who prefer
 
 ## 🌟 Features
 
-- 📘 Typescript for a better developer experience
-- 🚄 Bun for blazing fast development
-- ⏱ Manifest version 3 (MV3) for priority publishing
-- 🚀 Astro enabling flexible popup design
-- 🐱‍🏍 Cool Mascot
+-   📘 Typescript for a better developer experience
+-   🚄 Bun for blazing fast development
+-   ⏱ Manifest version 3 (MV3) for priority publishing
+-   🚀 Astro enabling flexible popup design
+-   🐱‍🏍 Cool Mascot
 
 ## 🚧 Before starting
 
 Make sure you have some understanding of extension development. Here are some resources:
 
-- [Chrome](https://developer.chrome.com/docs/extensions/mv3/getstarted/development-basics/)
-- [Firefox](https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/Your_first_WebExtension)
-- Windows Users
-  - Until [this](https://github.com/oven-sh/bun/issues/43) is resolved, Bun is not supported on Windows. [WSL](https://learn.microsoft.com/en-us/windows/wsl/install) is a workaround.
-  - Or use the [Node.js + npm version](https://github.com/AminoffZ/catonaut-node) of this template
+-   [Chrome](https://developer.chrome.com/docs/extensions/mv3/getstarted/development-basics/)
+-   [Firefox](https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/Your_first_WebExtension)
+-   Windows Users
+    -   Until [this](https://github.com/oven-sh/bun/issues/43) is resolved, Bun is not supported on Windows. [WSL](https://learn.microsoft.com/en-us/windows/wsl/install) is a workaround.
+    -   Or use the [Node.js + npm version](https://github.com/AminoffZ/catonaut-node) of this template
 
 ## 🛠️ Setup
 
@@ -45,40 +45,40 @@ Example:
 
 ```json
 {
-  "manifest_version": 3,
-  "name": "Your Extension Name",
-  "version": "0.1.0",
-  "web_accessible_resources": [
-    {
-      "matches": ["http://*/*"],
-      "resources": ["assets/styles/content.css"]
+    "manifest_version": 3,
+    "name": "Your Extension Name",
+    "version": "0.1.0",
+    "web_accessible_resources": [
+        {
+            "matches": ["http://*/*"],
+            "resources": ["assets/styles/content.css"]
+        }
+    ],
+    "content_scripts": [
+        {
+            "matches": ["http://*/*"],
+            "js": ["content.js"],
+            "css": ["content.css"]
+        }
+    ],
+    "background": {
+        "service_worker": "background.js"
+    },
+    "action": {
+        "default_popup": "index.html"
+    },
+    "browser_specific_settings": {
+        "gecko": {
+            "id": "yourcustom@token.io",
+            "strict_min_version": "42.0"
+        }
+    },
+    "icons": {
+        "16": "assets/icon16.png",
+        "32": "assets/icon32.png",
+        "48": "assets/icon48.png",
+        "128": "assets/icon128.png"
     }
-  ],
-  "content_scripts": [
-    {
-      "matches": ["http://*/*"],
-      "js": ["content.js"],
-      "css": ["content.css"]
-    }
-  ],
-  "background": {
-    "service_worker": "background.js"
-  },
-  "action": {
-    "default_popup": "index.html"
-  },
-  "browser_specific_settings": {
-    "gecko": {
-      "id": "yourcustom@token.io",
-      "strict_min_version": "42.0"
-    }
-  },
-  "icons": {
-    "16": "assets/icon16.png",
-    "32": "assets/icon32.png",
-    "48": "assets/icon48.png",
-    "128": "assets/icon128.png"
-  }
 }
 ```
 
