@@ -1,0 +1,19 @@
+{
+    "name": "My App",
+    "version": "1.0.0",
+    "manifest_version": 3,
+    "permissions": ["activeTab", "scripting"],
+    "host_permissions": ["https://wd5.myworkday.com/wpi/*"],
+    "action": {
+        "default_popup": "index.html"
+    },
+    "background": {
+        "service_worker": "background.js"
+    },
+    "content_scripts": [
+        {
+            "matches": ["https://wd5.myworkday.com/wpi/d/task/2998$28771.htmld"],
+            "js": ["content.js"]
+        }
+    ]
+}
