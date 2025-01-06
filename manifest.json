@@ -2,7 +2,7 @@
     "name": "My App",
     "version": "1.0.0",
     "manifest_version": 3,
-    "permissions": ["activeTab", "scripting"],
+    "permissions": ["activeTab", "scripting", "storage"],
     "host_permissions": ["https://wd5.myworkday.com/wpi/*"],
     "background": {
         "service_worker": "background.js"
