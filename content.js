@@ -13,8 +13,8 @@ setTimeout(() => {
     const columnNames = Array.from(headerRows)
         .filter((row) => row.getAttribute("scope") !== "colgroup")
         .flatMap((row) => {
-            return Array.from(row.querySelectorAll("button[title]")).map((button) =>
-                button.getAttribute("title").split(" - ")[0]
+            return Array.from(row.querySelectorAll("button[title]")).map(
+                (button) => button.getAttribute("title").split(" - ")[0]
             );
         });
 
@@ -33,11 +33,13 @@ setTimeout(() => {
                     'div[class*="gwt-Label WNNO WGMO"]'
                 );
                 const attributeName = columnNames[index - 1];
-                const attribute = innerDiv?.getAttribute("title");
+                let attribute = innerDiv?.getAttribute("title");
 
-                console.log(`${attributeName}: ${attribute}`);
+                if (!attribute) {
+                    attribute = cell.textContent.trim();
+                }
 
-                rowData[attributeName] = attribute
+                rowData[attributeName] = attribute;
             });
 
             return {
@@ -56,5 +58,4 @@ setTimeout(() => {
 
     // Send courses object to the background script
     chrome.runtime.sendMessage({ courses: courses });
-
-}, 7000)
+}, 7000);
