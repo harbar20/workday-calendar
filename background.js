@@ -58,8 +58,8 @@ chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
         // Add parsed data to the data object
         course.parsed_schedule = {
             days: daysArray,
-            startTime: times.split(" - ")[0],
-            endTime: times.split(" - ")[1],
+            start_time: times.split(" - ")[0],
+            end_time: times.split(" - ")[1],
             location: location,
         };
 
