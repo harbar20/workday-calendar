@@ -9,8 +9,16 @@
     },
     "content_scripts": [
         {
-            "matches": ["https://wd5.myworkday.com/wpi/d/task/2998$28771.htmld"],
+            "matches": [
+                "https://wd5.myworkday.com/wpi/d/task/2998$28771.htmld"
+            ],
             "js": ["content.js"]
+        }
+    ],
+    "web_accessible_resources": [
+        {
+            "resources": ["popup.html"],
+            "matches": ["https://wd5.myworkday.com/*"]
         }
     ]
 }

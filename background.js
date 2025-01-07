@@ -2,7 +2,7 @@
 function getUserId() {
     return new Promise((resolve, reject) => {
         if (!chrome.storage || !chrome.storage.local) {
-            reject(new Error('Chrome storage API is not available'));
+            reject(new Error("Chrome storage API is not available"));
             return;
         }
 
@@ -45,7 +45,9 @@ chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
 
     const user_id = await getUserId();
 
-    const data = request.courses.filter((course) => course.section && course.meeting_pattern);
+    const data = request.courses.filter(
+        (course) => course.section && course.meeting_pattern
+    );
 
     const parsedData = data.map((course) => {
         // Parse meeting pattern
@@ -68,16 +70,25 @@ chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
 
     console.log(parsedData);
 
-    fetch(`https://workday-calendar.harbar2021.workers.dev/${user_id}`, {
-        method: "POST",
-        mode: "no-cors",
-        headers: {
-            "Content-Type": "application/json",
-            // "Access-Control-Allow-Origin": "*",
-            // "Access-Control-Allow-Methods": "GET,HEAD,POST,OPTIONS",
-            // "Access-Control-Max-Age": "86400",
-            // "Access-Control-Allow-Headers": "*"
-        },
-        body: JSON.stringify(parsedData),
-    });
+    try {
+        await fetch(
+            `https://workday-calendar.harbar2021.workers.dev/${user_id}`,
+            {
+                method: "POST",
+                mode: "no-cors",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(parsedData),
+            }
+        );
+
+        // Send completion message back to content script
+        chrome.tabs.sendMessage(sender.tab.id, { type: "FETCH_COMPLETE" });
+    } catch (error) {
+        chrome.tabs.sendMessage(sender.tab.id, {
+            type: "FETCH_ERROR",
+            error: error.message,
+        });
+    }
 });

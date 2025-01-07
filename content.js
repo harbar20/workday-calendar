@@ -13,8 +13,8 @@ setTimeout(() => {
     const columnNames = Array.from(headerRows)
         .filter((row) => row.getAttribute("scope") !== "colgroup")
         .flatMap((row) => {
-            return Array.from(row.querySelectorAll("button[title]")).map((button) =>
-                button.getAttribute("title").split(" - ")[0]
+            return Array.from(row.querySelectorAll("button[title]")).map(
+                (button) => button.getAttribute("title").split(" - ")[0]
             );
         });
 
@@ -39,7 +39,7 @@ setTimeout(() => {
                     attribute = cell.textContent.trim();
                 }
 
-                rowData[attributeName] = attribute
+                rowData[attributeName] = attribute;
             });
 
             return {
@@ -58,5 +58,26 @@ setTimeout(() => {
 
     // Send courses object to the background script
     chrome.runtime.sendMessage({ courses: courses });
+}, 7000);
 
-}, 7000)
+// Add message listener
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+    if (message.type === "FETCH_COMPLETE") {
+        // Create and show popup
+        fetch(chrome.runtime.getURL("popup.html"))
+            .then((response) => response.text())
+            .then((html) => {
+                const div = document.createElement("div");
+                div.innerHTML = html;
+                document.body.appendChild(div.firstChild);
+
+                // Remove popup after 3 seconds
+                setTimeout(() => {
+                    document.querySelector(".popup").remove();
+                }, 3000);
+            });
+    } else if (message.type === "FETCH_ERROR") {
+        // Handle error case
+        console.error("Failed to update calendar:", message.error);
+    }
+});
