@@ -33,7 +33,7 @@ setTimeout(() => {
                     'div[class*="gwt-Label WNNO WGMO"]'
                 );
                 const attributeName = columnNames[index - 1];
-                const attribute = innerDiv?.getAttribute("title");
+                let attribute = innerDiv?.getAttribute("title");
 
                 if (!attribute) {
                     attribute = cell.textContent.trim();
