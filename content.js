@@ -1,8 +1,36 @@
-// Get all table rows
-let courseRows = [];
+// Generate or retrieve user ID
+function getUserId() {
+    return new Promise((resolve, reject) => {
+        if (!chrome.storage || !chrome.storage.local) {
+            reject(new Error("Chrome storage API is not available"));
+            return;
+        }
 
-setTimeout(() => {
-    courseRows = document.querySelectorAll('tr[class*="css-"]');
+        chrome.storage.local.get(["user_id"], (result) => {
+            if (chrome.runtime.lastError) {
+                reject(chrome.runtime.lastError);
+                return;
+            }
+
+            if (result.user_id) {
+                resolve(result.user_id);
+            } else {
+                // Generate a new random ID if none exists
+                const newId = crypto.randomUUID();
+                chrome.storage.local.set({ user_id: newId }, () => {
+                    if (chrome.runtime.lastError) {
+                        reject(chrome.runtime.lastError);
+                        return;
+                    }
+                    resolve(newId);
+                });
+            }
+        });
+    });
+}
+
+setTimeout(async () => {
+    let courseRows = document.querySelectorAll('tr[class*="css-"]');
 
     const headerRows = [
         ...courseRows[0].querySelectorAll("th"),
@@ -57,27 +85,5 @@ setTimeout(() => {
     console.log(JSON.stringify(courses, null, 2));
 
     // Send courses object to the background script
-    chrome.runtime.sendMessage({ courses: courses });
+    chrome.runtime.sendMessage({ courses: course, user_id: await getUserId() });
 }, 7000);
-
-// Add message listener
-chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-    if (message.type === "FETCH_COMPLETE") {
-        // Create and show popup
-        fetch(chrome.runtime.getURL("popup.html"))
-            .then((response) => response.text())
-            .then((html) => {
-                const div = document.createElement("div");
-                div.innerHTML = html;
-                document.body.appendChild(div.firstChild);
-
-                // Remove popup after 3 seconds
-                setTimeout(() => {
-                    document.querySelector(".popup").remove();
-                }, 3000);
-            });
-    } else if (message.type === "FETCH_ERROR") {
-        // Handle error case
-        console.error("Failed to update calendar:", message.error);
-    }
-});

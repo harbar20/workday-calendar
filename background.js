@@ -1,34 +1,3 @@
-// Generate or retrieve installation ID
-function getUserId() {
-    return new Promise((resolve, reject) => {
-        if (!chrome.storage || !chrome.storage.local) {
-            reject(new Error("Chrome storage API is not available"));
-            return;
-        }
-
-        chrome.storage.local.get(["user_id"], (result) => {
-            if (chrome.runtime.lastError) {
-                reject(chrome.runtime.lastError);
-                return;
-            }
-
-            if (result.user_id) {
-                resolve(result.user_id);
-            } else {
-                // Generate a new random ID if none exists
-                const newId = crypto.randomUUID();
-                chrome.storage.local.set({ user_id: newId }, () => {
-                    if (chrome.runtime.lastError) {
-                        reject(chrome.runtime.lastError);
-                        return;
-                    }
-                    resolve(newId);
-                });
-            }
-        });
-    });
-}
-
 const dayMapping = {
     M: "MO",
     T: "TU",
@@ -41,9 +10,9 @@ const dayMapping = {
 
 // Receive message from content.js
 chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
-    if (!request.courses) return;
+    if (!request.courses || !request.user_id) return;
 
-    const user_id = await getUserId();
+    const user_id = request.user_id;
 
     const data = request.courses.filter(
         (course) => course.section && course.meeting_pattern
@@ -69,26 +38,12 @@ chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
     });
 
     console.log(parsedData);
-
-    try {
-        await fetch(
-            `https://workday-calendar.harbar2021.workers.dev/${user_id}`,
-            {
-                method: "POST",
-                mode: "no-cors",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify(parsedData),
-            }
-        );
-
-        // Send completion message back to content script
-        chrome.tabs.sendMessage(sender.tab.id, { type: "FETCH_COMPLETE" });
-    } catch (error) {
-        chrome.tabs.sendMessage(sender.tab.id, {
-            type: "FETCH_ERROR",
-            error: error.message,
-        });
-    }
+    await fetch(`https://workday-calendar.harbar2021.workers.dev/${user_id}`, {
+        method: "POST",
+        mode: "no-cors",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify(parsedData),
+    });
 });
